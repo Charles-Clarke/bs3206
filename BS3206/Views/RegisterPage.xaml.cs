@@ -59,6 +59,7 @@ public partial class RegisterPage : ContentPage
         {
             StatusLabel.TextColor = Colors.Green;
             StatusLabel.Text = "Registration successful!";
+            await Shell.Current.GoToAsync("//Login");
         }
         else
         {

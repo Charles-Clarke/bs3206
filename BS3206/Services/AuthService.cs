@@ -9,15 +9,19 @@ namespace BS3206.Services
 
         public static async Task<bool> RegisterUserAsync(string fullName, string email, string password)
         {
-            using var conn = new SqlConnection(connectionString);
-            var cmd = new SqlCommand(@"
-                INSERT INTO Users (FullName, Email, PasswordHash, IsMfaVerified, Role)
-                VALUES (@FullName, @Email, @PasswordHash, @IsMfaVerified, @Role)", conn);
+            using SqlConnection conn = new SqlConnection(connectionString);
 
+            string hashedPassword = HashHelper.HashPassword(password);
+
+            string query = @"
+        INSERT INTO Users (FullName, Email, PasswordHash, IsMfaVerified, Role)
+        VALUES (@FullName, @Email, @PasswordHash, @IsMfaVerified, @Role)";
+
+            SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@FullName", fullName);
             cmd.Parameters.AddWithValue("@Email", email);
-            cmd.Parameters.AddWithValue("@PasswordHash", HashHelper.HashPassword(password));
-            cmd.Parameters.AddWithValue("@IsMfaVerified", true);
+            cmd.Parameters.AddWithValue("@PasswordHash", hashedPassword);
+            cmd.Parameters.AddWithValue("@IsMfaVerified", true); // Change to false if you want real MFA
             cmd.Parameters.AddWithValue("@Role", "User");
 
             try
@@ -26,11 +30,13 @@ namespace BS3206.Services
                 await cmd.ExecuteNonQueryAsync();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("SQL ERROR: " + ex.Message);
                 return false;
             }
         }
+
 
         public static async Task<bool> ValidateLoginAsync(string email, string password)
         {

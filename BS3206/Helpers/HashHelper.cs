@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 
 namespace BS3206.Helpers
 {
@@ -7,26 +6,33 @@ namespace BS3206.Helpers
     {
         public static string HashPassword(string password)
         {
-            byte[] salt = RandomNumberGenerator.GetBytes(16);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            byte[] hash = pbkdf2.GetBytes(32);
-            byte[] hashBytes = new byte[48];
-            Buffer.BlockCopy(salt, 0, hashBytes, 0, 16);
-            Buffer.BlockCopy(hash, 0, hashBytes, 16, 32);
-            return Convert.ToBase64String(hashBytes);
+            using var deriveBytes = new Rfc2898DeriveBytes(password, 16, 10000, HashAlgorithmName.SHA256);
+            byte[] salt = deriveBytes.Salt;
+            byte[] hash = deriveBytes.GetBytes(32);
+
+            return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
         }
 
-        public static bool VerifyPassword(string password, string storedHash)
+        public static bool VerifyPassword(string enteredPassword, string storedHash)
         {
-            byte[] hashBytes = Convert.FromBase64String(storedHash);
-            byte[] salt = new byte[16];
-            Buffer.BlockCopy(hashBytes, 0, salt, 0, 16);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            byte[] hash = pbkdf2.GetBytes(32);
-            for (int i = 0; i < 32; i++)
-                if (hashBytes[i + 16] != hash[i])
+            try
+            {
+                var parts = storedHash.Split('.');
+                if (parts.Length != 2)
                     return false;
-            return true;
+
+                byte[] salt = Convert.FromBase64String(parts[0]);
+                byte[] expectedHash = Convert.FromBase64String(parts[1]);
+
+                using var deriveBytes = new Rfc2898DeriveBytes(enteredPassword, salt, 10000, HashAlgorithmName.SHA256);
+                byte[] actualHash = deriveBytes.GetBytes(32);
+
+                return actualHash.SequenceEqual(expectedHash);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
