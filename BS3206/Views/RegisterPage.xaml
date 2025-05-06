@@ -4,11 +4,20 @@
              x:Class="BS3206.Views.RegisterPage"
              Title="Register">
     <VerticalStackLayout Padding="30" Spacing="10">
-        <Entry x:Name="FullNameEntry" Placeholder="Full Name" />
-        <Entry x:Name="EmailEntry" Placeholder="Email" />
-        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" />
+        <Entry x:Name="FullNameEntry" Placeholder="Full Name" Unfocused="OnUsernameUnfocused" />
+        <Label x:Name="FullNameStatus" TextColor="Red" FontSize="12" />
+
+        <Entry x:Name="EmailEntry" Placeholder="Email" TextChanged="OnEmailChanged" Unfocused="OnEmailUnfocused" />
+        <Label x:Name="EmailStatus" TextColor="Red" FontSize="12" />
+
+
+        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" TextChanged="OnPasswordChanged" />
+        <Label x:Name="PasswordStatus" TextColor="Red" FontSize="12" />
+
+        <Entry x:Name="ConfirmPasswordEntry" Placeholder="Confirm Password" IsPassword="True" TextChanged="OnConfirmPasswordChanged" />
+        <Label x:Name="ConfirmStatus" TextColor="Red" FontSize="12" />
+
         <Button Text="Register" Clicked="OnRegisterClicked" />
-        <Button Text="Back to Login" Clicked="OnBackToLogin" />
-        <Label x:Name="StatusLabel" TextColor="Red" />
+        <Label x:Name="StatusLabel" TextColor="Red" FontAttributes="Bold" />
     </VerticalStackLayout>
 </ContentPage>

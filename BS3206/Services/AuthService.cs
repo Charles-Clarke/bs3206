@@ -44,5 +44,26 @@ namespace BS3206.Services
 
             return HashHelper.VerifyPassword(password, result.ToString());
         }
+
+        public static async Task<bool> IsEmailTakenAsync(string email)
+        {
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            var cmd = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Email = @Email", conn);
+            cmd.Parameters.AddWithValue("@Email", email);
+            var count = (int)await cmd.ExecuteScalarAsync();
+            return count > 0;
+        }
+
+        public static async Task<bool> IsUsernameTakenAsync(string fullName)
+        {
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            var cmd = new SqlCommand("SELECT COUNT(*) FROM Users WHERE FullName = @FullName", conn);
+            cmd.Parameters.AddWithValue("@FullName", fullName);
+            var count = (int)await cmd.ExecuteScalarAsync();
+            return count > 0;
+        }
+
     }
 }
