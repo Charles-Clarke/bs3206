@@ -77,6 +77,8 @@ public partial class RegisterPage : ContentPage
             EmailStatus.Text = "Invalid email format.";
         else
             EmailStatus.Text = "";
+
+        CheckFormValidity();
     }
 
     private void OnPasswordChanged(object sender, TextChangedEventArgs e)
@@ -85,6 +87,8 @@ public partial class RegisterPage : ContentPage
             PasswordStatus.Text = "Too weak: Use 7+ chars, mix case, number, and !?@#";
         else
             PasswordStatus.Text = "";
+
+        CheckFormValidity();
     }
 
     private void OnConfirmPasswordChanged(object sender, TextChangedEventArgs e)
@@ -93,7 +97,10 @@ public partial class RegisterPage : ContentPage
             ConfirmStatus.Text = "Passwords do not match.";
         else
             ConfirmStatus.Text = "";
+
+        CheckFormValidity();
     }
+
     private async void OnEmailUnfocused(object sender, FocusEventArgs e)
     {
         if (!ValidationHelper.IsValidEmail(EmailEntry.Text))
@@ -104,6 +111,7 @@ public partial class RegisterPage : ContentPage
 
         bool emailExists = await AuthService.IsEmailTakenAsync(EmailEntry.Text);
         EmailStatus.Text = emailExists ? "Email is already registered." : "";
+        CheckFormValidity();
     }
 
     private async void OnUsernameUnfocused(object sender, FocusEventArgs e)
@@ -116,7 +124,27 @@ public partial class RegisterPage : ContentPage
 
         bool usernameExists = await AuthService.IsUsernameTakenAsync(FullNameEntry.Text);
         FullNameStatus.Text = usernameExists ? "Username is already in use." : "";
+        CheckFormValidity();
     }
 
+    private void CheckFormValidity()
+    {
+        bool valid =
+            !string.IsNullOrWhiteSpace(FullNameEntry.Text) &&
+            !string.IsNullOrWhiteSpace(EmailEntry.Text) &&
+            !string.IsNullOrWhiteSpace(PasswordEntry.Text) &&
+            !string.IsNullOrWhiteSpace(ConfirmPasswordEntry.Text) &&
+            ValidationHelper.IsValidEmail(EmailEntry.Text) &&
+            ValidationHelper.IsValidPassword(PasswordEntry.Text) &&
+            PasswordEntry.Text == ConfirmPasswordEntry.Text &&
+            EmailStatus.Text == "" &&
+            FullNameStatus.Text == "";
+
+        RegisterButton.IsEnabled = valid;
+    }
+    private async void OnBackToLoginClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//Login");
+    }
 
 }
