@@ -6,4 +6,9 @@ public partial class DashboardPage : ContentPage
 	{
 		InitializeComponent();
 	}
+    private async void OnAccountButtonClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("///AccountPage");
+    }
+
 }

@@ -1,3 +1,4 @@
+using BS3206.Helpers;
 using BS3206.Services;
 
 namespace BS3206.Views;
@@ -14,6 +15,7 @@ public partial class LoginPage : ContentPage
         bool success = await AuthService.ValidateLoginAsync(email, password);
         if (success)
         {
+            Preferences.Set("UserEmail", email);
             await Shell.Current.GoToAsync("//Dashboard");
         }
         else

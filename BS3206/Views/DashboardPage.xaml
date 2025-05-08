@@ -3,8 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BS3206.Views.DashboardPage"
              Title="Dashboard">
-    <Label Text="Welcome to the Dashboard"
-           HorizontalOptions="Center"
-           VerticalOptions="Center"
-           FontSize="24"/>
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <Label Text="Welcome to the Dashboard"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               FontSize="24" />
+
+        <Button Text="My Account" Clicked="OnAccountButtonClicked" />
+    </VerticalStackLayout>
+
 </ContentPage>

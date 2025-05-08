@@ -71,5 +71,26 @@ namespace BS3206.Services
             return count > 0;
         }
 
+        public static async Task<string?> GetProfilePictureAsync(string email)
+        {
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+
+            var cmd = new SqlCommand("SELECT ProfilePicture FROM Users WHERE Email = @Email", conn);
+            cmd.Parameters.AddWithValue("@Email", email);
+            var result = await cmd.ExecuteScalarAsync();
+
+            return result?.ToString();
+        }
+        public static async Task UpdateProfilePictureAsync(string email, string base64Image)
+        {
+            using var conn = new SqlConnection(connectionString);
+            await conn.OpenAsync();
+            var cmd = new SqlCommand("UPDATE Users SET ProfilePicture = @ProfilePicture WHERE Email = @Email", conn);
+            cmd.Parameters.AddWithValue("@ProfilePicture", base64Image);
+            cmd.Parameters.AddWithValue("@Email", email);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
     }
 }

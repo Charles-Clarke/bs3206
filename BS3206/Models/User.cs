@@ -13,5 +13,7 @@ namespace BS3206.Models
         public string PasswordHash { get; set; }
         public bool IsMfaVerified { get; set; }
         public string Role { get; set; }
+        public string? ProfilePicture { get; set; }
+
     }
 }
